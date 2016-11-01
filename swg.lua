@@ -1,7 +1,8 @@
 -- load config
 local redis_host = os.getenv('REDIS_HOST')
-local redis_port = os.getenv('REDIS_PORT') or 6379
+local redis_port = os.getenv('REDIS_PORT')
 local auth_url = os.getenv('AUTH_URL')
+local token_expire = os.getenv('TOKEN_EXPIRE')
 if redis_host == nil then
     ngx.log(ngx.ERR, "failed to get config : redis_host , please set env REDIS_HOST")
     ngx.exit(500)
@@ -31,7 +32,7 @@ ngx.var.upstream = host
 -- check token
 local token = ngx.var.arg_swg_token or ngx.var.cookie_swg_token;
 if token ~= nil then
-    local expires = ngx.cookie_time(math.ceil(ngx.now()) + 600)
+    local expires = ngx.cookie_time(math.ceil(ngx.now()) + token_expire)
     ngx.header["Set-Cookie"] = "swg_token=" .. token .. "; expires=" .. expires .. ";"
 else
     ngx.redirect(auth_url);
@@ -42,6 +43,7 @@ local user, err = red:get("user_token_" .. token)
 if user == ngx.null then
     ngx.redirect(auth_url);
 end
+red:expire("user_token_" .. token, token_expire)
 
 
 -- check acl
