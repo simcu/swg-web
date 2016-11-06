@@ -44,7 +44,7 @@ end
 
 -- get full url
 local fullurl = ngx.var.scheme .. "://" .. ngx.var.http_host .. ngx.var.request_uri
-local fullauthurl = auth_url .. "?ref=" .. fullurl
+local fullauthurl = auth_url .. "?ref=" .. encodeURI(fullurl)
 -- check hostname
 local host, err = red:get("host_" .. ngx.var.http_host)
 if host == ngx.null then
@@ -74,4 +74,9 @@ key = "acl_" .. user .. "_" .. ngx.var.http_host
 local acl, err = red:get(key)
 if acl == ngx.null then
     ngx.exit(403)
+end
+
+function encodeURI(s)
+    s = string.gsub(s, "([^%w%.%- ])", function(c) return string.format("%%%02X", string.byte(c)) end)
+    return string.gsub(s, " ", "+")
 end
