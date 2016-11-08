@@ -1,3 +1,7 @@
+function encodeURI(s)
+    s = string.gsub(s, "([^%w%.%- ])", function(c) return string.format("%%%02X", string.byte(c)) end)
+    return string.gsub(s, " ", "+")
+end
 -- connect redis
 local redis = require "resty.redis"
 local redis_host = os.getenv('REDIS_HOST')
@@ -74,9 +78,4 @@ key = "acl_" .. user .. "_" .. ngx.var.http_host
 local acl, err = red:get(key)
 if acl == ngx.null then
     ngx.exit(403)
-end
-
-function encodeURI(s)
-    s = string.gsub(s, "([^%w%.%- ])", function(c) return string.format("%%%02X", string.byte(c)) end)
-    return string.gsub(s, " ", "+")
 end
