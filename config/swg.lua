@@ -23,7 +23,6 @@ red:set_timeout(1000)
 local ok, err = red:connect(redis_host, redis_port)
 if not ok then
     ngx.log(ngx.ERR, "[SWG] Connet Redis Server Error: ", err)
-    ngx.say("Connet Redis Server Error:" .. err)
     ngx.exit(500)
 end
 
