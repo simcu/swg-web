@@ -1,5 +1,5 @@
-FROM openresty/openresty
+FROM openresty/openresty:alpine
+RUN apk add --update php7 php7-iconv php7-mbstring
 COPY . /home/
-ENV REDIS_PORT 6379
-ENV TOKEN_EXPIRE 600
-RUN rm -f /usr/local/openresty/nginx/conf/nginx.conf && ln -s /home/nginx.conf /usr/local/openresty/nginx/conf/nginx.conf
+EXPOSE 80 443
+CMD /home/swg
