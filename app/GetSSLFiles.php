@@ -16,7 +16,6 @@ class GetSSLFiles
     public static function run($redis, $console)
     {
         $ssls = $redis->keys("swg_ssl_*_name");
-        self::_clearFiles();
         foreach ($ssls as $item) {
             $tmp = explode('_', $item);
             $kpart = $tmp[2];
@@ -32,7 +31,7 @@ class GetSSLFiles
 
     private static function _writeFile($kv)
     {
-        $fs = new Filesystem(new Local(__DIR__ . '/../config/ssl/'));
+        $fs = new Filesystem(new Local(__DIR__ . '/../config/'));
         $respose = true;
         foreach ($kv as $k => $v) {
             if (!$fs->put($k, $v)) {
@@ -40,11 +39,5 @@ class GetSSLFiles
             }
         }
         return $respose;
-    }
-
-    private static function _clearFiles()
-    {
-        $fs = new Filesystem(new Local(__DIR__ . '/../config/'));
-        $fs->deleteDir('ssl');
     }
 }
